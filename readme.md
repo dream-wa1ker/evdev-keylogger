@@ -192,7 +192,7 @@ If not, then you need to create a victim user to carry out this keylogger. Norma
 
 But... If a user is in the `input` group, you don't even have to be a `sudo` or `root` user in order to be exploitable. Just a normal user - even your sudo passwords will be logged. 
 
->[!DANGER]
+>[!WARNING]
 > This is a demonstration of only the **keylogger** : which logs your keys. But `/dev/input` is not only keyboard input event directory, it is a directory which consists of all inputs to your system - `mouse`, `keyboard`, `laptop lid (close/open)`, `joystick`, `or whatever` input device. 
 >
 > As a result, it is sufficiently easy for a person to escalate this keylogger C program into a systemwide EVENTLOGGER capable of logging all the input events including the mouse coordinates, (with which he or she may be able to detect your screen dimensions, stimulate clicks and keypresses), and remotely flush it live to a random server, or save it in a file and periodically push it to a remote server; you are purged.
