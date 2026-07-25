@@ -178,7 +178,10 @@ const char *translate_key(int keycode) {
     //                : when caps off and shift on, shifted..
     //                : when caps off and shift off, normal..
     //                : when caps on  and shift on, normal..
-    if (is_letter && (shift_pressed ^ is_capson) && e->shifted) return e->shifted;
+    if (is_letter) {
+        if ((shift_pressed ^ is_capson) && e->shifted) return e->shifted;
+        return e->normal;
+    }
     // first this superset case is evaluated.
     // if the shift_pressed == true and there exists a shift counterpart for that keycode,then return the shift counterpart.
     if (shift_pressed && e->shifted ) return e->shifted;
