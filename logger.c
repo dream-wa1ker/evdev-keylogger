@@ -32,6 +32,7 @@ struct input_event {
 // if shift is pressed.
 bool shift_pressed = false;
 bool is_logged_to_file = false;
+bool is_capson = false;
 // define a struct if the character is normal, shift pressed.
 typedef struct {
     // a char pointer to normal character.
@@ -169,12 +170,18 @@ const char *translate_key(int keycode) {
     // if the keycode is out of range (not in 0 to KEY_MAX), returns null.
 
     const KeyEntry *e = &keymap[keycode];
+    // we cannot use like keycode >= KEY_A kinda thing, because the keymaps are not continous.
+    bool is_letter = (e->normal && e->shifted && e->normal[0] >= 'a' && e->normal[0] <= 'z' && e->shifted[0] >= 'A' && e->shifted[0] <= 'Z' && e->normal[1] == '\0' && e->shifted[1] == '\0');
     // gets the pointer to the struct of particular keycode among the keymap.
-
+    // the capslock?
+    // caps xor shift : when caps on and shift off, shifted..
+    //                : when caps off and shift on, shifted..
+    //                : when caps off and shift off, normal..
+    //                : when caps on  and shift on, normal..
+    if (is_letter && (shift_pressed ^ is_capson) && e->shifted) return e->shifted;
+    // first this superset case is evaluated.
     // if the shift_pressed == true and there exists a shift counterpart for that keycode,then return the shift counterpart.
-    if (shift_pressed && e->shifted)
-        return e->shifted;
-
+    if (shift_pressed && e->shifted ) return e->shifted;
     // else, return the normal character.
     // typeof(e->normal) = char *
     return e->normal; // falls back here whether shift is off, or key has no shifted form
@@ -224,6 +231,10 @@ int main(int argc, char *argv[argc + 1]) {
         // if the event code is left shift, or right sift, then toggle the boolean value.
         if (ev.code == KEY_LEFTSHIFT || ev.code == KEY_RIGHTSHIFT) {
             shift_pressed = (ev.value != 0);
+            continue;
+        }
+        if (ev.code == KEY_CAPSLOCK && ev.value == 1) {
+            is_capson = !is_capson;
             continue;
         }
 
